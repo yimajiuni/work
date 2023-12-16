@@ -44,15 +44,16 @@ export default {
       imageFile: null,
       imageFileEncoded: '',
       isValidImageFile: null,
+      isValidTitle: false,
+      title: '',
     };
   },
   
   methods: {
 
-    toDefault() {
+   /*toDefault() {
       this.currentState = IS_DEFAULT;
-    },
-    
+    },*/
     onFileChange(event) {
       // Handle file change event
 
@@ -91,6 +92,7 @@ export default {
       });
       if (!response) return;
       this.toDefault();
+      console.log("サブミット1");
 
       // TODO: Emitting a mock event, replace with actual data from the response
       const { id, title, image } = response.data;
@@ -112,7 +114,7 @@ export default {
 
 .add-image {
   width: 100%; /* Set the desired width */
-  /*height: 100px; /* Set the desired height */
+  height: 100%; /* Set the desired height */
   object-fit: cover; /* Maintain aspect ratio and cover the container */
   margin: 5px; /* Add margin for spacing between images */
 }
