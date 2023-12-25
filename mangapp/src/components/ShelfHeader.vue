@@ -22,16 +22,16 @@
 
 <script>
 /*import ShelfModal from '@/components/ShelfModal.vue';*/
- /*
+/*
 export default {
  
-  components: {
-   ShelfModal,
-  },
-  methods: {
-    onAddBook(book) {
-      this.$emit('add-book', book);
-    },
-  },
+ components: {
+  ShelfModal,
+ },
+ methods: {
+   onAddBook(book) {
+     this.$emit('add-book', book);
+   },
+ },
 };*/
 </script>
