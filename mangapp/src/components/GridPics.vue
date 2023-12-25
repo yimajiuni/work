@@ -96,11 +96,9 @@ export default {
     const nextBook = (widget) => {
       widget.a++;
       widget.b++;
-      console.log("Updated a, b:", widget.a, widget.b);
     };
     const loadLayout = () => {
       const savedData = JSON.parse(localStorage.getItem("gridstack-layout") || "{}");
-      console.log("おっと", savedData);
 
       if (savedData.layouts) {
         grid.value.load(savedData.layouts);
@@ -114,7 +112,6 @@ export default {
 
     const addNewWidget = () => {
       const uniqueId = Date.now().toString(16);
-      console.log(`おっとっと`, props.books);
 
 
       const widget = {
@@ -129,15 +126,12 @@ export default {
 
       nextTick(() => {
         makeWidget(widget);
-        console.log("After nextBook:", widget.a, widget.b);
-
       });
     };
 
     const clearWidgets = () => {
       widgets.value = [];
       grid.value.removeAll();
-      console.warn("おっとっと１")
     };
 
     const deleteWidget = (id) => {
@@ -145,7 +139,6 @@ export default {
       if (index === -1) {
         return;
       };
-      console.log("おっとっと2");
       const elSelector = `#${id}`;
       grid.value.removeWidget(elSelector);
       widgets.value.splice(index, 1);
@@ -196,7 +189,6 @@ export default {
     const onAddBook = async (book) => {
       this.books.push(book);
       this.$emit('add-book', book);
-      console.log("おっとっと追加");
     };
 
     onMounted(() => {
