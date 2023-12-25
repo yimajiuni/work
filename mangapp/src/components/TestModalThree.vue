@@ -2,7 +2,6 @@
   <div>
     <input type="file" @change="onFileChange" />
     <button @click="processImage">Process Image</button>
-
     <div v-if="isValidImageFile !== null">
       <p>Image File Status: {{ isValidImageFile ? 'Valid' : 'Invalid' }}</p>
       <img :src="imageFileEncoded" alt="Processed Image" v-if="isValidImageFile" class="add-image" />
@@ -51,7 +50,7 @@ export default {
       this.processImage();
       this.onSubmit();
     },
-
+    
     async processImage() {
       // Process the image and update state
       if (this.imageFile) {
@@ -102,12 +101,8 @@ export default {
 <style scoped>
 .add-image {
   width: 100%;
-  /* Set the desired width */
   height: 100%;
-  /* Set the desired height */
   object-fit: cover;
-  /* Maintain aspect ratio and cover the container */
   margin: 5px;
-  /* Add margin for spacing between images */
 }
 </style>
