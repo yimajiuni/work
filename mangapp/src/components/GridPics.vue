@@ -161,7 +161,6 @@ export default {
         const subsetEnd = widget.b;
         const subset = props.books.slice(subsetStart, subsetEnd);
         return {
-          ...layouts,
           ...widget,
           books: subset,
           a: subsetStart,
@@ -170,6 +169,7 @@ export default {
       }); 
 
       const layoutData = {
+        layouts,
         widgets: widgetsWithBooks,
       };
 
