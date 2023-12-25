@@ -97,6 +97,12 @@ export default {
       widget.a++;
       widget.b++;
     };
+    /*const loadLayout = () => {
+      const loadedWidgets = JSON.parse(localStorage.getItem("gridstack-layout") || "[]");
+      if (loadedWidgets.length) {
+        widgets.value = loadedWidgets;
+      }
+    };*/
     const loadLayout = () => {
       const savedData = JSON.parse(localStorage.getItem("gridstack-layout") || "{}");
 
@@ -143,6 +149,11 @@ export default {
       grid.value.removeWidget(elSelector);
       widgets.value.splice(index, 1);
     };
+     /*const saveLayout = () => {
+      const layouts = grid.value.save();
+      localStorage.setItem("gridstack-layout", JSON.stringify
+      (layouts));
+    };*/
     const saveLayout = () => {
       const layouts = grid.value.save();
       const widgetsWithBooks = widgets.value.map((widget) => {
