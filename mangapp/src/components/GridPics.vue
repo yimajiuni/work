@@ -234,4 +234,3 @@ export default {
   cursor: move;
 }
 </style>
-  
