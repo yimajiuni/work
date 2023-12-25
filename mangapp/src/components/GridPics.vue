@@ -13,26 +13,41 @@
       <button class="m-1 btn btn-secondary" @click="deleteLayout()">
         レイアウトを削除
       </button>
-      <button class="m-1 btn btn-secondary" @click="grid.compact()">整列</button>
+      <button class="m-1 btn btn-secondary" @click="grid.compact()">
+        整列
+      </button>
       <!-- {{ info }}-->
     </div>
 
     <div class="grid-stack">
-      <div v-for="widget in widgets" :id="widget.id" :key="widget.id" :gs-id="widget.id" :gs-x="widget.x" :gs-y="widget.y"
-        :gs-h="widget.h" :gs-w="widget.w">
+      <div
+        v-for="widget in widgets"
+        :id="widget.id"
+        :key="widget.id"
+        :gs-id="widget.id"
+        :gs-x="widget.x"
+        :gs-y="widget.y"
+        :gs-h="widget.h"
+        :gs-w="widget.w"
+      >
         <div class="grid-stack-item-content card shadow">
           <div class="bg-light d-flex">
             <div class="flex-grow-1 draggable">
-
-
               <div>
-                <div v-for="{ id, title, image } in widget.books || books.slice(widget.a, widget.b)" :key="id"
-                  class="my-3"><!--<p>{{ widget.a,widget.b }}</p>-->
+                <div
+                  v-for="{ id, title, image } in books[widget.bookIndex]"
+                  :title="widget.bookIndex"
+                  :key="id"
+                  class="my-3"
+                >
                   <img :src="image" alt="" class="card-img-top" />
                   <div class="card-body">
                     <h2 class="card-title" :aria-label="title">{{ title }}</h2>
                     <div class="text-end">
-                      <button class="btn btn-outline-danger" @click="$emit('delete-book', id)">
+                      <button
+                        class="btn btn-outline-danger"
+                        @click="$emit('delete-book', id)"
+                      >
                         <i class="bi-trash"></i>
                         削除
                       </button>
@@ -40,7 +55,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
             <div>
               <button class="btn" @click="deleteWidget(widget.id)">
@@ -57,7 +71,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -66,8 +79,28 @@ import { onMounted, nextTick, ref } from "vue";
 import "gridstack/dist/gridstack.min.css";
 import "gridstack/dist/gridstack-extra.css";
 import "gridstack/dist/gridstack-extra.min.css";
-import { GridStack } from 'gridstack';
-import TestModalThree from '@/components/TestModalThree.vue';
+import { GridStack } from "gridstack";
+import TestModalThree from "@/components/TestModalThree.vue";
+
+function makeInitialData(books) {
+  // TODO: make sure that all the books in `bookIndex` are actually in `books`
+  return [
+    { id: "initWidget-1", w: 2, h: 2, bookIndex: 0 },
+    { id: "initWidget-2", w: 2, h: 2, bookIndex: 1 },
+    { id: "initWidget-3", w: 2, h: 2, bookIndex: 2 },
+    { id: "initWidget-4", w: 2, h: 2, bookIndex: 3 },
+  ];
+}
+
+function loadLocalStorage(books) {
+  let data = null;
+  try {
+    data = JSON.parse(localStorage.getItem("gridstack-layout") || "null");
+  } catch (error) {
+    console.warn(error);
+  }
+  return (data && data.widgets) || makeInitialData(books);
+}
 
 export default {
   components: {
@@ -80,45 +113,20 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   setup(props) {
     const grid = ref(null);
-    const widgets = ref([
-      { id: "initWidget-1", w: 2, h: 2, a: 0, b: 1, },
-      { id: "initWidget-2", w: 2, h: 2, a: 1, b: 2 },
-      { id: "initWidget-3", w: 2, h: 2, a: 2, b: 3 },
-      { id: "initWidget-4", w: 2, h: 2, a: 3, b: 4 },
-    ]);
+    const widgets = ref([]);
     const info = ref("");
 
     const nextBook = (widget) => {
       widget.a++;
       widget.b++;
     };
-    /*const loadLayout = () => {
-      const loadedWidgets = JSON.parse(localStorage.getItem("gridstack-layout") || "[]");
-      if (loadedWidgets.length) {
-        widgets.value = loadedWidgets;
-      }
-    };*/
-    const loadLayout = () => {
-      const savedData = JSON.parse(localStorage.getItem("gridstack-layout") || "{}");
-
-      if (savedData.layouts) {
-        grid.value.load(savedData.layouts);
-      }
-
-      if (savedData.widgets) {
-        widgets.value = savedData.widgets;
-
-      }
-    };
 
     const addNewWidget = () => {
       const uniqueId = Date.now().toString(16);
-
 
       const widget = {
         id: `widget-${uniqueId}`,
@@ -126,7 +134,6 @@ export default {
         h: Math.floor(Math.random() * 2) ? 2 : 4,
         a: widgets.value.length,
         b: widgets.value.length + 1,
-
       };
       widgets.value.push(widget);
 
@@ -144,36 +151,30 @@ export default {
       const index = widgets.value.findIndex((widget) => widget.id === id);
       if (index === -1) {
         return;
-      };
+      }
       const elSelector = `#${id}`;
       grid.value.removeWidget(elSelector);
       widgets.value.splice(index, 1);
     };
-     /*const saveLayout = () => {
-      const layouts = grid.value.save();
-      localStorage.setItem("gridstack-layout", JSON.stringify
-      (layouts));
-    };*/
     const saveLayout = () => {
-      const layouts = grid.value.save();
-      const widgetsWithBooks = widgets.value.map((widget) => {
-        const subsetStart = widget.a;
-        const subsetEnd = widget.b;
-        const subset = props.books.slice(subsetStart, subsetEnd);
-        return {
-          ...widget,
-          books: subset,
-          a: subsetStart,
-          b: subsetEnd,
-        };
-      }); 
-
-      const layoutData = {
-        layouts,
-        widgets: widgetsWithBooks,
-      };
-
-      localStorage.setItem("gridstack-layout", JSON.stringify(layoutData));
+      const layout = grid.value.save();
+      console.log({ layout });
+      localStorage.setItem(
+        "gridstack-layout",
+        JSON.stringify({
+          widgets: widgets.value.map((widget) => {
+            const { x, y, w, h } =
+              layout.find((gridWidget) => gridWidget.id === widget.id) || {};
+            return {
+              ...widget,
+              x,
+              y,
+              w,
+              h,
+            };
+          }),
+        })
+      );
     };
 
     const deleteLayout = () => {
@@ -191,15 +192,13 @@ export default {
       });
     };
 
-
-
     const compactGrid = () => {
       grid.value.compact();
     };
 
     const onAddBook = async (book) => {
       this.books.push(book);
-      this.$emit('add-book', book);
+      this.$emit("add-book", book);
     };
 
     onMounted(() => {
@@ -211,8 +210,7 @@ export default {
         maxRow: 20,
         acceptWidgets: true,
       });
-
-      loadLayout();
+      widgets.value = loadLocalStorage(props.books);
       nextTick(() => {
         makeWidgets();
       });
@@ -236,10 +234,8 @@ export default {
     };
   },
 };
-
-
 </script>
-  
+
 <style scoped>
 .draggable {
   cursor: move;
