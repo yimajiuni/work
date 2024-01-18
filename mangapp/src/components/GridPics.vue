@@ -34,13 +34,18 @@
           <div class="bg-light d-flex">
             <div class="flex-grow-1 draggable">
               <div>
-                <div
-                  v-for="{ id, title, image } in books[widget.bookIndex]"
+                <!---<div v-for="{ id, title, image } in widget.bookIndex.map(index => books[index])||
+                  books.slice(widget.a, widget.b)"
                   :title="widget.bookIndex"
                   :key="id"
                   class="my-3"
-                >
-                  <img :src="image" alt="" class="card-img-top" />
+                >--> 
+                <div
+                  v-for="{ id, title, image } in widget.books||
+                  books.slice(widget.a, widget.b)"
+                  :key="id"
+                  class="my-3"
+                ><img :src="image" alt="" class="card-img-top" />
                   <div class="card-body">
                     <h2 class="card-title" :aria-label="title">{{ title }}</h2>
                     <div class="text-end">
@@ -85,13 +90,32 @@ import TestModalThree from "@/components/TestModalThree.vue";
 function makeInitialData(books) {
   // TODO: make sure that all the books in `bookIndex` are actually in `books`
   return [
+    { id: "initWidget-1", w: 2, h: 2, a: 0, b: 1 },
+    { id: "initWidget-2", w: 2, h: 2, a: 1, b: 2 },
+    { id: "initWidget-3", w: 2, h: 2, a: 2, b: 3 },
+    { id: "initWidget-4", w: 2, h: 2, a: 3, b: 4 },
+  ];
+
+/*function makeInitialData(books) {
+  // TODO: make sure that all the books in `bookIndex` are actually in `books`
+  return [
     { id: "initWidget-1", w: 2, h: 2, bookIndex: 0 },
     { id: "initWidget-2", w: 2, h: 2, bookIndex: 1 },
     { id: "initWidget-3", w: 2, h: 2, bookIndex: 2 },
     { id: "initWidget-4", w: 2, h: 2, bookIndex: 3 },
-  ];
+  ];*/
 }
+/*function makeInitialData(books) {
+  return books.map((_, index) => ({
+    id: `initWidget-${index + 1}`,
+    w: 2,
+    h: 2,
+    bookIndex: index,
+  }));
+}
+*/
 
+/**/
 function loadLocalStorage(books) {
   let data = null;
   try {
@@ -101,7 +125,19 @@ function loadLocalStorage(books) {
   }
   return (data && data.widgets) || makeInitialData(books);
 }
+  /*const loadLayout = () => {
+      const savedData = JSON.parse(
+        localStorage.getItem("gridstack-layout") || "{}"
+      );
 
+      if (savedData.layouts) {
+        grid.value.load(savedData.layouts);
+      }
+
+      if (savedData.widgets) {
+        widgets.value = savedData.widgets;
+      }
+    };*/
 export default {
   components: {
     TestModalThree,
@@ -117,7 +153,12 @@ export default {
   },
   setup(props) {
     const grid = ref(null);
-    const widgets = ref([]);
+    const widgets = ref([
+      /*{ id: "initWidget-1", w: 2, h: 2, a: 0, b: 1 },
+      { id: "initWidget-2", w: 2, h: 2, a: 1, b: 2 },
+      { id: "initWidget-3", w: 2, h: 2, a: 2, b: 3 },
+      { id: "initWidget-4", w: 2, h: 2, a: 3, b: 4 },*/
+    ]);
     const info = ref("");
 
     const nextBook = (widget) => {
@@ -156,7 +197,7 @@ export default {
       grid.value.removeWidget(elSelector);
       widgets.value.splice(index, 1);
     };
-    const saveLayout = () => {
+      const saveLayout = () => {
       const layout = grid.value.save();
       console.log({ layout });
       localStorage.setItem(
@@ -165,7 +206,7 @@ export default {
           widgets: widgets.value.map((widget) => {
             const { x, y, w, h } =
               layout.find((gridWidget) => gridWidget.id === widget.id) || {};
-            return {
+            return {/*setitemメソッドでgrid.valueオブジェクト内のwidgetの値=layoutをx,y,w,hを指定し*/
               ...widget,
               x,
               y,
@@ -176,6 +217,26 @@ export default {
         })
       );
     };
+/*    const saveLayout = () => {
+      const layouts = grid.value.save();
+      const widgetsWithBooks = widgets.value.map((widget) => {
+        const subsetStart = widget.a;
+        const subsetEnd = widget.b;
+        const subset = props.books.slice(subsetStart, subsetEnd);
+        return {
+          ...widget,
+          books: subset,
+          a: subsetStart,
+          b: subsetEnd,
+        };
+      });
+   const layoutData = {
+        ...layouts,
+        widgets: widgetsWithBooks,
+      };
+localStorage.setItem("gridstack-layout", JSON.stringify(layoutData));
+    };*/
+
 
     const deleteLayout = () => {
       localStorage.removeItem("gridstack-layout");
@@ -210,7 +271,7 @@ export default {
         maxRow: 20,
         acceptWidgets: true,
       });
-      widgets.value = loadLocalStorage(props.books);
+      /**/widgets.value = loadLocalStorage(props.books);
       nextTick(() => {
         makeWidgets();
       });
@@ -227,6 +288,7 @@ export default {
       addNewWidget,
       clearWidgets,
       deleteWidget,
+     /*loadLayout,*/
       saveLayout,
       deleteLayout,
       compactGrid,
