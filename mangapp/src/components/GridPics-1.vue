@@ -34,15 +34,9 @@
           <div class="bg-light d-flex">
             <div class="flex-grow-1 draggable">
               <div>
-                <!---<div v-for="{ id, title, image } in widget.bookIndex.map(index => books[index])||
-                  books.slice(widget.a, widget.b)"
-                  :title="widget.bookIndex"
-                  :key="id"
-                  class="my-3"
-                >-->
                 <div
-                  v-for="{ id, title, image } in books[widget.bookIndex] ||
-                  books.slice(widget.a, widget.b)"
+                  v-for="{ id, title, image } in books[widget.bookIndex]"
+                  :title="widget.bookIndex"
                   :key="id"
                   class="my-3"
                 >
@@ -72,13 +66,12 @@
             <!-- Display widget content or additional functionality here -->
             <test-modal-three class="ml-auto" @add-book="onAddBook">
             </test-modal-three>
-            <!--<span class="text">{{ widget.id }}</span>-->
+            <span class="text">{{ widget.id }}</span>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div></div>
 </template>
 
 <script>
@@ -90,33 +83,15 @@ import { GridStack } from "gridstack";
 import TestModalThree from "@/components/TestModalThree.vue";
 
 function makeInitialData(books) {
-  return [
-    { id: "initWidget-1", w: 2, h: 2, a: 0, b: 1 },
-    { id: "initWidget-2", w: 2, h: 2, a: 1, b: 2 },
-    { id: "initWidget-3", w: 2, h: 2, a: 2, b: 3 },
-    { id: "initWidget-4", w: 2, h: 2, a: 3, b: 4 },
-  ];
-}
-/*function makeInitialData(books) {
   // TODO: make sure that all the books in `bookIndex` are actually in `books`
   return [
     { id: "initWidget-1", w: 2, h: 2, bookIndex: 0 },
     { id: "initWidget-2", w: 2, h: 2, bookIndex: 1 },
     { id: "initWidget-3", w: 2, h: 2, bookIndex: 2 },
     { id: "initWidget-4", w: 2, h: 2, bookIndex: 3 },
-  ];*/
-
-/*function makeInitialData(books) {
-  return books.map((_, index) => ({
-    id: `initWidget-${index + 1}`,
-    w: 2,
-    h: 2,
-    bookIndex: index,
-  }));
+  ];
 }
-*/
 
-/**/
 function loadLocalStorage(books) {
   let data = null;
   try {
@@ -126,23 +101,6 @@ function loadLocalStorage(books) {
   }
   return (data && data.widgets) || makeInitialData(books);
 }
-/*const loadLayout = () => {
-      const savedData = JSON.parse(
-        localStorage.getItem("gridstack-layout") || "{}"
-      );
-
-      if (savedData.layouts) {
-        grid.value.load(savedData.layouts);
-      }
-
-      if (savedData.widgets) {
-        widgets.value = savedData.widgets;
-      }
-    };*/
-const onAddBook = async function (book) {
-  props.books.push(book);
-  this.$emit("add-book", book);
-};
 
 export default {
   components: {
@@ -159,14 +117,9 @@ export default {
   },
   setup(props) {
     const grid = ref(null);
-    const widgets = ref([
-      /*{ id: "initWidget-1", w: 2, h: 2, a: 0, b: 1 },
-      { id: "initWidget-2", w: 2, h: 2, a: 1, b: 2 },
-      { id: "initWidget-3", w: 2, h: 2, a: 2, b: 3 },
-      { id: "initWidget-4", w: 2, h: 2, a: 3, b: 4 },*/
-    ]);
+    const widgets = ref([]);
     const info = ref("");
-
+    console.log("プロップ", props.books);
     const nextBook = (widget) => {
       widget.a++;
       widget.b++;
@@ -213,7 +166,6 @@ export default {
             const { x, y, w, h } =
               layout.find((gridWidget) => gridWidget.id === widget.id) || {};
             return {
-              /*setitemメソッドでgrid.valueオブジェクト内のwidgetの値=layoutをx,y,w,h座標を指定し、book arrayのデータであるwidgetsをスプレッド*/
               ...widget,
               x,
               y,
@@ -224,25 +176,6 @@ export default {
         })
       );
     };
-    /*    const saveLayout = () => {
-      const layouts = grid.value.save();
-      const widgetsWithBooks = widgets.value.map((widget) => {
-        const subsetStart = widget.a;
-        const subsetEnd = widget.b;
-        const subset = props.books.slice(subsetStart, subsetEnd);
-        return {
-          ...widget,
-          books: subset,
-          a: subsetStart,
-          b: subsetEnd,
-        };
-      });
-   const layoutData = {
-        ...layouts,
-        widgets: widgetsWithBooks,
-      };
-localStorage.setItem("gridstack-layout", JSON.stringify(layoutData));
-    };*/
 
     const deleteLayout = () => {
       localStorage.removeItem("gridstack-layout");
@@ -263,8 +196,8 @@ localStorage.setItem("gridstack-layout", JSON.stringify(layoutData));
       grid.value.compact();
     };
 
-    const onAddBook = async function (book) {
-      props.books.push(book);
+    const onAddBook = async (book) => {
+      this.books.push(book);
       this.$emit("add-book", book);
     };
 
@@ -277,7 +210,7 @@ localStorage.setItem("gridstack-layout", JSON.stringify(layoutData));
         maxRow: 20,
         acceptWidgets: true,
       });
-      /**/ widgets.value = loadLocalStorage(props.books);
+      widgets.value = loadLocalStorage(props.books);
       nextTick(() => {
         makeWidgets();
       });
@@ -294,7 +227,6 @@ localStorage.setItem("gridstack-layout", JSON.stringify(layoutData));
       addNewWidget,
       clearWidgets,
       deleteWidget,
-      /*loadLayout,*/
       saveLayout,
       deleteLayout,
       compactGrid,

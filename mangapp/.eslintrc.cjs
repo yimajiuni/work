@@ -1,12 +1,15 @@
 /* eslint-env node */
 module.exports = {
   root: true,
-  'extends': [
+  extends: [
     'plugin:vue/vue3-essential',
     'eslint:recommended',
-    '@vue/eslint-config-airbnb-with-typescript'
+    '@vue/eslint-config-airbnb-with-typescript',
   ],
   parserOptions: {
-    ecmaVersion: 'latest'
-  }
-}
+    ecmaVersion: 'latest',
+  },
+  rules: {
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true, optionalDependencies: true, peerDependencies: true }],
+  },
+};

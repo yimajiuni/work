@@ -5,7 +5,7 @@
         <div class="navbar-brand">
           <div href="./index.html">
             <!--<img
-              src="@/assets/kari.png"
+              src="@/assets/cover.jpg"
               alt="Bookshelf"
             />-->
           </div>
@@ -19,7 +19,6 @@
     </div>
   </div>
 </template>
-
 <script>
 /*import ShelfModal from '@/components/ShelfModal.vue';*/
 /*
